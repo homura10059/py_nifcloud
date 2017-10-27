@@ -3,6 +3,8 @@ from botocore.credentials import Credentials
 from botocore.awsrequest import AWSRequest
 from botocore.auth import SigV2Auth
 import time
+import os
+import yaml
 import requests
 
 
@@ -18,24 +20,46 @@ class NifCloudClient(object):
     ISO8601 = '%Y-%m-%dT%H:%M:%SZ'
 
     def __init__(self, service_name, region_name=None, api_version=None, base_path=None,
-                 use_ssl=True, access_key_id=None, secret_access_key=None):
+                 use_ssl=True, access_key_id=None, secret_access_key=None, config_file='~/.nifcloud.yml'):
         """
+        config_fileを読み取って認証情報を初期化します。
+        引数にも値がある場合には引数が優先されます。
+        :param service_name: サービス名
+        :param region_name: リージョン名
+        :param api_version: APIバージョン
+        :param base_path:
+        :param use_ssl:
+        :param access_key_id:
+        :param secret_access_key:
+        :param config_file: 設定ファイル
         """
+        # file から読み出し
+        file_path = os.path.expanduser(config_file).replace('/', os.sep)
+        if os.path.isfile(file_path):
+            config = yaml.load(open(file_path, 'r').read())
+            if 'ACCESS_KEY_ID' in config:
+                self.ACCESS_KEY_ID = config['ACCESS_KEY_ID']
+            if 'SECRET_ACCESS_KEY' in config:
+                self.SECRET_ACCESS_KEY = config['SECRET_ACCESS_KEY']
+        # 引数があれば引数の情報で上書き
+        if access_key_id is not None:
+            self.ACCESS_KEY_ID = access_key_id
+        if secret_access_key is not None:
+            self.SECRET_ACCESS_KEY = secret_access_key
+        # 認証情報を生成
+        self.CREDENTIALS = Credentials(self.ACCESS_KEY_ID, self.SECRET_ACCESS_KEY)
+
         self.SERVICE_NAME = service_name
         self.REGION_NAME = region_name
         self.API_VERSION = api_version
         self.BASE_PATH = base_path
         self.USE_SSL = use_ssl
-        # 認証情報を生成
-        self.ACCESS_KEY_ID = access_key_id
-        self.SECRET_ACCESS_KEY = secret_access_key
-        self.CREDENTIALS = Credentials(self.ACCESS_KEY_ID, self.SECRET_ACCESS_KEY)
 
     def get(self, path=None, query=None, headers=None, **kwargs):
-        self.request("GET", path, query, headers, **kwargs)
+        self.request(method="GET", path=path, query=query, headers=headers, **kwargs)
 
     def post(self, path=None, query=None, headers=None, **kwargs):
-        self.request("POST", path, query, headers, **kwargs)
+        self.request(method="POST", path=path, query=query, headers=headers, **kwargs)
 
     def request(self, method, path=None, query=None, headers=None, **kwargs):
         """
