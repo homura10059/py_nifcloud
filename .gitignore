@@ -159,3 +159,7 @@ fabric.properties
 .idea/modules.xml
 .idea/py_nifcloud.iml
 .idea/vcs.xml
+
+\.idea/preferred-vcs\.xml
+
+README\.html
