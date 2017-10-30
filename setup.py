@@ -1,19 +1,19 @@
 from setuptools import setup, find_packages
 
 try:
-    with open('README.md') as f:
+    with open('README.rst', encoding="utf-8") as f:
         readme = f.read()
 except IOError:
     readme = ''
 
 setup(
     name='py_nifcloud',
-    version='0.0.1',
+    version='0.0.2',
     description='Python wrapper for NifCloud',
     long_description=readme,
     url='https://github.com/o-hayato/py_nifcloud',
-    author='** yourname **',
-    author_email='** your@address.com **',
+    author='o-hayato',
+    author_email='preasper0+github@gmail.com',
     license='MIT',
     packages=find_packages(exclude=['tests']),
     install_requires=[
