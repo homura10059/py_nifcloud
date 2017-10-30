@@ -19,7 +19,7 @@ Install
 
 ::
 
-    pip install py_nifcloud
+    pip install py-nifcloud
 
 Usage
 -----
