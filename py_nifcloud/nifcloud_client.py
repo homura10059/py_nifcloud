@@ -36,7 +36,8 @@ class NifCloudClient(object):
         # file から読み出し
         file_path = os.path.expanduser(config_file).replace('/', os.sep)
         if os.path.isfile(file_path):
-            config = yaml.load(open(file_path, 'r').read())
+            with open(file_path, 'r') as file:
+                config = yaml.load(file.read())
             if 'ACCESS_KEY_ID' in config:
                 self.ACCESS_KEY_ID = config['ACCESS_KEY_ID']
             if 'SECRET_ACCESS_KEY' in config:
