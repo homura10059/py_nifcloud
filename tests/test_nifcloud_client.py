@@ -1,6 +1,6 @@
 # -*- encoding:utf-8 -*-
 import unittest
-from py_nifcloud.computing_client import ComputingClient
+from py_nifcloud import ComputingClient
 
 
 class TestNifCloudClientRequest(unittest.TestCase):
