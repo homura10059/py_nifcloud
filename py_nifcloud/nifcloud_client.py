@@ -57,10 +57,10 @@ class NifCloudClient(object):
         self.USE_SSL = use_ssl
 
     def get(self, path=None, query=None, headers=None, **kwargs):
-        self.request(method="GET", path=path, query=query, headers=headers, **kwargs)
+        return self.request(method="GET", path=path, query=query, headers=headers, **kwargs)
 
     def post(self, path=None, query=None, headers=None, **kwargs):
-        self.request(method="POST", path=path, query=query, headers=headers, **kwargs)
+        return self.request(method="POST", path=path, query=query, headers=headers, **kwargs)
 
     def request(self, method, path=None, query=None, headers=None, **kwargs):
         """
