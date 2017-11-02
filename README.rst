@@ -21,11 +21,12 @@ Install
 
     pip install py-nifcloud
 
-Usage
------
+Preparation
+-----------
 
-preparation
+config file
 ~~~~~~~~~~~
+
 
 ACCESS_KEY_ID と SECRET_ACCESS_KEY を含んだconfigファイルを準備してください (デフォルト:  ~/.nifcloud.yml)
 
@@ -33,6 +34,23 @@ ACCESS_KEY_ID と SECRET_ACCESS_KEY を含んだconfigファイルを準備し�
 
     ACCESS_KEY_ID: 'your access key'
     SECRET_ACCESS_KEY: 'your secret access key'
+
+
+environment
+~~~~~~~~~~~
+
+ACCESS_KEY_ID と SECRET_ACCESS_KEY を環境変数に設定して準備することもできます
+config file より優先されます
+
+::
+
+
+    export ACCESS_KEY_ID="your access key"
+    export SECRET_ACCESS_KEY="your secret access key"
+
+
+Usage
+-----
 
 NifCloudClient
 ~~~~~~~~~~~~~~

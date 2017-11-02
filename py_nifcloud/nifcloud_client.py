@@ -33,19 +33,33 @@ class NifCloudClient(object):
         :param secret_access_key:
         :param config_file: 設定ファイル
         """
+
         # file から読み出し
         file_path = os.path.expanduser(config_file).replace('/', os.sep)
         if os.path.isfile(file_path):
-            config = yaml.load(open(file_path, 'r').read())
-            if 'ACCESS_KEY_ID' in config:
+            with open(file_path, 'r') as file:
+                config = yaml.load(file.read())
+            if config is not None and 'ACCESS_KEY_ID' in config:
                 self.ACCESS_KEY_ID = config['ACCESS_KEY_ID']
-            if 'SECRET_ACCESS_KEY' in config:
+            if config is not None and 'SECRET_ACCESS_KEY' in config:
                 self.SECRET_ACCESS_KEY = config['SECRET_ACCESS_KEY']
+
+        # 環境変数があれば環境変数で上書き
+        if hasattr(self, "ACCESS_KEY_ID"):
+            self.ACCESS_KEY_ID = os.getenv("ACCESS_KEY_ID", self.ACCESS_KEY_ID)
+        else:
+            self.ACCESS_KEY_ID = os.getenv("ACCESS_KEY_ID")
+        if hasattr(self, "SECRET_ACCESS_KEY"):
+            self.SECRET_ACCESS_KEY = os.getenv("SECRET_ACCESS_KEY", self.SECRET_ACCESS_KEY)
+        else:
+            self.SECRET_ACCESS_KEY = os.getenv("SECRET_ACCESS_KEY")
+
         # 引数があれば引数の情報で上書き
         if access_key_id is not None:
             self.ACCESS_KEY_ID = access_key_id
         if secret_access_key is not None:
             self.SECRET_ACCESS_KEY = secret_access_key
+
         # 認証情報を生成
         self.CREDENTIALS = Credentials(self.ACCESS_KEY_ID, self.SECRET_ACCESS_KEY)
 
@@ -56,10 +70,10 @@ class NifCloudClient(object):
         self.USE_SSL = use_ssl
 
     def get(self, path=None, query=None, headers=None, **kwargs):
-        self.request(method="GET", path=path, query=query, headers=headers, **kwargs)
+        return self.request(method="GET", path=path, query=query, headers=headers, **kwargs)
 
     def post(self, path=None, query=None, headers=None, **kwargs):
-        self.request(method="POST", path=path, query=query, headers=headers, **kwargs)
+        return self.request(method="POST", path=path, query=query, headers=headers, **kwargs)
 
     def request(self, method, path=None, query=None, headers=None, **kwargs):
         """
