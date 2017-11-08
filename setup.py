@@ -19,7 +19,7 @@ setup(
     install_requires=[
         'requests',
         'PyYAML',
-        'botocore',
+        'botocore', 'beautifulsoup4',
     ],
     classifiers=[
         'Development Status :: 4 - Beta',

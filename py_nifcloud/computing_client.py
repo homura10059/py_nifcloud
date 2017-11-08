@@ -30,3 +30,32 @@ class ComputingClient(NifCloudClient):
         response = self.post(query=params)
         return response
 
+    def delete_private_lan(self, private_lan_name=None, network_id=None):
+        params = {"Action": "NiftyDeletePrivateLan"}
+        if private_lan_name is not None:
+            params["PrivateLanName"] = private_lan_name
+        if network_id is not None:
+            params["NetworkId"] = network_id
+
+        response = self.post(query=params)
+        return response
+
+    def describe_private_lans(self, network_ids=None, private_lan_names=None, filter_query=None):
+
+        if network_ids is None:
+            network_ids = []
+        if private_lan_names is None:
+            private_lan_names = []
+        if filter_query is None:
+            filter_query = {}
+            # 面倒なので直接指定させてるが直したほうがいいかも
+
+        params = {"Action": "NiftyDescribePrivateLans"}
+        params.update(filter_query)
+        for i, network_id in enumerate(network_ids):
+            params["NetworkId.{}".format(i)] = network_id
+        for i, private_lan_name in enumerate(private_lan_names):
+            params["PrivateLanName.{}".format(i)] = private_lan_name
+
+        response = self.post(query=params)
+        return response
