@@ -1,5 +1,7 @@
 # -*- encoding:utf-8 -*-
 import enum
+import os
+import yaml
 
 from py_nifcloud.nifcloud_client import NifCloudClient
 
@@ -11,7 +13,18 @@ class ComputingClient(NifCloudClient):
 
     def __init__(self, service_name="computing", region_name=None, api_version=None, base_path="api",
                  use_ssl=True, access_key_id=None, secret_access_key=None, config_file='~/.nifcloud.yml'):
-        
+
+        # file から読み出し
+        file_path = os.path.expanduser(config_file).replace('/', os.sep)
+        if os.path.isfile(file_path):
+            with open(file_path, 'r') as file:
+                config = yaml.load(file.read())
+            if config is not None and 'COMPUTING_SERVICE_NAME' in config:
+                service_name = config['COMPUTING_SERVICE_NAME']
+        # 環境変数があれば環境変数で上書き
+        if hasattr(self, "COMPUTING_SERVICE_NAME"):
+            service_name = os.getenv("COMPUTING_SERVICE_NAME", service_name)
+
         super().__init__(service_name, region_name, api_version, base_path, use_ssl,
                          access_key_id, secret_access_key, config_file)
 
