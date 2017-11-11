@@ -1,8 +1,7 @@
 # -*- encoding:utf-8 -*-
 from botocore.credentials import Credentials
 from botocore.awsrequest import AWSRequest
-from botocore.auth import SigV2Auth
-import time
+from py_nifcloud.auth import NifCloudSigV2Auth
 import os
 import yaml
 import requests
@@ -94,17 +93,13 @@ class NifCloudClient(object):
 
         request = AWSRequest(method=method, url=self._make_endpoint_url(path), data=query, headers=headers)
 
-        # Signatureを生成
-        params = request.data
-        credentials = self.CREDENTIALS
-        params['AccessKeyId'] = credentials.access_key
-        params['SignatureVersion'] = self.SIGNATURE_VERSION
-        params['SignatureMethod'] = self.SIGNATURE_METHOD
-        params['Timestamp'] = time.strftime(self.ISO8601, time.gmtime())
-        if credentials.token:
-            params['SecurityToken'] = credentials.token
-        query_string, signature = SigV2Auth(credentials).calc_signature(request, params)
-        params['Signature'] = signature
+        signature_version = self._get_signature_version(request)
+        if signature_version == "2":
+            NifCloudSigV2Auth(self.CREDENTIALS).add_auth(request)
+            # TODO: 他のバージョンを追加していく
+        else:
+            # バージョンが見つからない場合のデフォルト
+            NifCloudSigV2Auth(self.CREDENTIALS).add_auth(request)
 
         # HTTPメソッドに合わせてリクエスト
         if request.method == "GET":
@@ -130,3 +125,21 @@ class NifCloudClient(object):
             protocol=protocol, service=service, region=region, api_domain=self.API_DOMAIN, path=path_param)
 
         return endpoint_url
+
+    def _get_signature_version(self, request):
+        """
+        リクエストとサービス名を元にsignature_versionを返却
+        :param request:
+        :return:
+        """
+
+        params = request.data
+        if 'SignatureVersion' in params:
+            return params['SignatureVersion']
+        elif 'computing' in self.SERVICE_NAME:
+            return '2'
+            #  TODO:各サービスが対応している最大値を定義していく
+        else:
+            # サービス毎の定義がない場合のデフォルト値
+            return '2'
+
