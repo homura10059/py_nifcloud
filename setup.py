@@ -8,7 +8,7 @@ except IOError:
 
 setup(
     name='py_nifcloud',
-    version='0.0.4',
+    version='0.0.5',
     description='Python wrapper for NifCloud',
     long_description=readme,
     url='https://github.com/o-hayato/py_nifcloud',
