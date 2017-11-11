@@ -21,9 +21,11 @@ class ComputingClient(NifCloudClient):
                 config = yaml.load(file.read())
             if config is not None and 'COMPUTING_SERVICE_NAME' in config:
                 service_name = config['COMPUTING_SERVICE_NAME']
+            if config is not None and 'COMPUTING_REGION_NAME' in config:
+                region_name = config['COMPUTING_REGION_NAME']
         # 環境変数があれば環境変数で上書き
-        if hasattr(self, "COMPUTING_SERVICE_NAME"):
-            service_name = os.getenv("COMPUTING_SERVICE_NAME", service_name)
+        service_name = os.getenv("COMPUTING_SERVICE_NAME", service_name)
+        region_name = os.getenv("COMPUTING_REGION_NAME", region_name)
 
         super().__init__(service_name, region_name, api_version, base_path, use_ssl,
                          access_key_id, secret_access_key, config_file)
