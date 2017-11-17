@@ -68,9 +68,9 @@ class ComputingClient(NifCloudClient):
         params = {"Action": "NiftyDescribePrivateLans"}
         params.update(filter_query)
         for i, network_id in enumerate(network_ids):
-            params["NetworkId.{}".format(i)] = network_id
+            params["NetworkId.{}".format(i+1)] = network_id
         for i, private_lan_name in enumerate(private_lan_names):
-            params["PrivateLanName.{}".format(i)] = private_lan_name
+            params["PrivateLanName.{}".format(i+1)] = private_lan_name
 
         response = self.post(query=params)
         return response
