@@ -31,17 +31,37 @@ class ComputingClient(NifCloudClient):
                          access_key_id, secret_access_key, config_file)
 
     def __update_param_from_list(self, params, key, values) -> None:
+        """
+        values で渡された array を key.n : value の形で param に設定する
+        :param params:
+        :param key:
+        :param values:
+        :return:
+        """
         values = self.__get_list(values)
         for i, value in enumerate(values):
             params["{key}.{num}".format(key=key, num=i+1)] = value
 
     @staticmethod
     def __update_params(params, key, value) -> None:
+        """
+        key : value の形で param に設定する
+        :param params:
+        :param key:
+        :param value:
+        :return:
+        """
         if value is not None:
             params["{}".format(key)] = value
 
     @staticmethod
     def __get_list(target_list) -> list:
+        """
+        target_list が None なら 空の List を
+        Noneでなければそのまま返す
+        :param target_list:
+        :return:
+        """
         if target_list is None:
             return []
         else:
@@ -49,6 +69,12 @@ class ComputingClient(NifCloudClient):
 
     @staticmethod
     def __get_dict(target_dict) -> dict:
+        """
+        target_dict が None なら 空の Dict を
+        Noneでなければそのまま返す
+        :param target_dict:
+        :return:
+        """
         if target_dict is None:
             return {}
         else:
