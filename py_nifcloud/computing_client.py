@@ -30,32 +30,32 @@ class ComputingClient(NifCloudClient):
         super().__init__(service_name, region_name, api_version, base_path, use_ssl,
                          access_key_id, secret_access_key, config_file)
 
-    @staticmethod
-    def __update_param_from_list(params, key, values):
+    def __update_param_from_list(self, params, key, values) -> None:
+        values = self.__get_list(values)
         for i, value in enumerate(values):
             params["{key}.{num}".format(key=key, num=i+1)] = value
 
     @staticmethod
-    def __update_params(params, key, value):
+    def __update_params(params, key, value) -> None:
         if value is not None:
             params["{}".format(key)] = value
 
     @staticmethod
-    def __get_list(target_list):
+    def __get_list(target_list) -> list:
         if target_list is None:
             return []
         else:
             return target_list
 
     @staticmethod
-    def __get_dict(target_dict):
+    def __get_dict(target_dict) -> dict:
         if target_dict is None:
             return {}
         else:
             return target_dict
 
-    def create_private_lan(self, cidr_block, private_lan_name=None, availability_zone=None,
-                           accounting_type=None, description=None):
+    def create_private_lan(self, cidr_block: str, private_lan_name: str=None, availability_zone: str=None,
+                           accounting_type: int=None, description: str=None):
 
         params = {"Action": "NiftyCreatePrivateLan", "CidrBlock": cidr_block}
         self.__update_param_from_list(params=params, key="PrivateLanName", values=private_lan_name)
@@ -66,7 +66,7 @@ class ComputingClient(NifCloudClient):
         response = self.post(query=params)
         return response
 
-    def delete_private_lan(self, private_lan_name=None, network_id=None):
+    def delete_private_lan(self, private_lan_name: str=None, network_id: str=None):
 
         params = {"Action": "NiftyDeletePrivateLan"}
         self.__update_param_from_list(params=params, key="PrivateLanName", values=private_lan_name)
@@ -75,7 +75,7 @@ class ComputingClient(NifCloudClient):
         response = self.post(query=params)
         return response
 
-    def describe_private_lans(self, network_ids=None, private_lan_names=None, filter_query=None):
+    def describe_private_lans(self, network_ids: str=None, private_lan_names: str=None, filter_query: dict=None):
 
         network_ids = self.__get_list(network_ids)
         private_lan_names = self.__get_list(private_lan_names)
@@ -90,7 +90,7 @@ class ComputingClient(NifCloudClient):
         response = self.post(query=params)
         return response
 
-    def create_security_group(self, group_name, group_description=None, zone=None):
+    def create_security_group(self, group_name: str, group_description: str=None, zone: str=None):
 
         params = {"Action": "CreateSecurityGroup", "GroupName": group_name}
         self.__update_params(params=params, key="GroupDescription", value=group_description)
@@ -99,7 +99,7 @@ class ComputingClient(NifCloudClient):
         response = self.post(query=params)
         return response
 
-    def delete_security_group(self, group_name):
+    def delete_security_group(self, group_name: str):
 
         params = {"Action": "DeleteSecurityGroup", "GroupName": group_name}
 
