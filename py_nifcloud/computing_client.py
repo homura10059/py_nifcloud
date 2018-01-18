@@ -87,6 +87,17 @@ class ComputingClient(NifCloudClient):
 
         return self.post(query=params)
 
+    def describe_instances(self, instance_ids: list=None, tenancies: list=None):
+
+        instance_ids = self.__get_list(instance_ids)
+        tenancies = self.__get_list(tenancies)
+
+        params = {"Action": "DescribeInstances"}
+        self.__update_param_from_list(params=params, key="InstanceId", values=instance_ids)
+        self.__update_param_from_list(params=params, key="Tenancy", values=tenancies)
+
+        return self.post(query=params)
+
     def create_private_lan(self, cidr_block: str, private_lan_name: str=None, availability_zone: str=None,
                            accounting_type: int=None, description: str=None):
 
@@ -106,7 +117,7 @@ class ComputingClient(NifCloudClient):
 
         return self.post(query=params)
 
-    def describe_private_lans(self, network_ids: str=None, private_lan_names: str=None, filter_query: dict=None):
+    def describe_private_lans(self, network_ids: list=None, private_lan_names: list=None, filter_query: dict=None):
 
         network_ids = self.__get_list(network_ids)
         private_lan_names = self.__get_list(private_lan_names)
