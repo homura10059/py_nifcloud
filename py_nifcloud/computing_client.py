@@ -30,47 +30,107 @@ class ComputingClient(NifCloudClient):
         super().__init__(service_name, region_name, api_version, base_path, use_ssl,
                          access_key_id, secret_access_key, config_file)
 
-    def create_private_lan(self, cidr_block, private_lan_name=None, availability_zone=None,
-                           accounting_type=None, description=None):
+    def __update_param_from_list(self, params, key, values) -> None:
+        """
+        values で渡された array を key.n : value の形で param に設定する
+        :param params:
+        :param key:
+        :param values:
+        :return:
+        """
+        values = self.__get_list(values)
+        for i, value in enumerate(values):
+            params["{key}.{num}".format(key=key, num=i+1)] = value
+
+    @staticmethod
+    def __update_params(params, key, value) -> None:
+        """
+        key : value の形で param に設定する
+        :param params:
+        :param key:
+        :param value:
+        :return:
+        """
+        if value is not None:
+            params["{}".format(key)] = value
+
+    @staticmethod
+    def __get_list(target_list) -> list:
+        """
+        target_list が None なら 空の List を
+        Noneでなければそのまま返す
+        :param target_list:
+        :return:
+        """
+        if target_list is None:
+            return []
+        else:
+            return target_list
+
+    @staticmethod
+    def __get_dict(target_dict) -> dict:
+        """
+        target_dict が None なら 空の Dict を
+        Noneでなければそのまま返す
+        :param target_dict:
+        :return:
+        """
+        if target_dict is None:
+            return {}
+        else:
+            return target_dict
+
+    def describe_instance_attribute(self, instance_id: str, attribute: str=None):
+
+        params = {"Action": "DescribeInstanceAttribute", "InstanceId": instance_id}
+        self.__update_params(params=params, key="Attribute", value=attribute)
+
+        return self.post(query=params)
+
+    def create_private_lan(self, cidr_block: str, private_lan_name: str=None, availability_zone: str=None,
+                           accounting_type: int=None, description: str=None):
+
         params = {"Action": "NiftyCreatePrivateLan", "CidrBlock": cidr_block}
-        if private_lan_name is not None:
-            params["PrivateLanName"] = private_lan_name
-        if availability_zone is not None:
-            params["AvailabilityZone"] = availability_zone
-        if accounting_type is not None:
-            params["AccountingType"] = accounting_type
-        if description is not None:
-            params["Description"] = description
+        self.__update_param_from_list(params=params, key="PrivateLanName", values=private_lan_name)
+        self.__update_param_from_list(params=params, key="AvailabilityZone", values=availability_zone)
+        self.__update_param_from_list(params=params, key="AccountingType", values=accounting_type)
+        self.__update_param_from_list(params=params, key="Description", values=description)
 
-        response = self.post(query=params)
-        return response
+        return self.post(query=params)
 
-    def delete_private_lan(self, private_lan_name=None, network_id=None):
+    def delete_private_lan(self, private_lan_name: str=None, network_id: str=None):
+
         params = {"Action": "NiftyDeletePrivateLan"}
-        if private_lan_name is not None:
-            params["PrivateLanName"] = private_lan_name
-        if network_id is not None:
-            params["NetworkId"] = network_id
+        self.__update_param_from_list(params=params, key="PrivateLanName", values=private_lan_name)
+        self.__update_param_from_list(params=params, key="NetworkId", values=network_id)
 
-        response = self.post(query=params)
-        return response
+        return self.post(query=params)
 
-    def describe_private_lans(self, network_ids=None, private_lan_names=None, filter_query=None):
+    def describe_private_lans(self, network_ids: str=None, private_lan_names: str=None, filter_query: dict=None):
 
-        if network_ids is None:
-            network_ids = []
-        if private_lan_names is None:
-            private_lan_names = []
-        if filter_query is None:
-            filter_query = {}
-            # 面倒なので直接指定させてるが直したほうがいいかも
+        network_ids = self.__get_list(network_ids)
+        private_lan_names = self.__get_list(private_lan_names)
+        filter_query = self.__get_dict(filter_query)
+        # filter_queryは面倒なので直接指定させてるが直したほうがいいかも
 
         params = {"Action": "NiftyDescribePrivateLans"}
         params.update(filter_query)
-        for i, network_id in enumerate(network_ids):
-            params["NetworkId.{}".format(i+1)] = network_id
-        for i, private_lan_name in enumerate(private_lan_names):
-            params["PrivateLanName.{}".format(i+1)] = private_lan_name
+        self.__update_param_from_list(params=params, key="NetworkId", values=network_ids)
+        self.__update_param_from_list(params=params, key="PrivateLanName", values=private_lan_names)
 
-        response = self.post(query=params)
-        return response
+        return self.post(query=params)
+
+    def create_security_group(self, group_name: str, group_description: str=None, zone: str=None):
+
+        params = {"Action": "CreateSecurityGroup", "GroupName": group_name}
+        self.__update_params(params=params, key="GroupDescription", value=group_description)
+        self.__update_params(params=params, key="Placement.AvailabilityZone", value=zone)
+
+        return self.post(query=params)
+
+    def delete_security_group(self, group_name: str):
+
+        params = {"Action": "DeleteSecurityGroup", "GroupName": group_name}
+
+        return self.post(query=params)
+
