@@ -80,6 +80,13 @@ class ComputingClient(NifCloudClient):
         else:
             return target_dict
 
+    def describe_instance_attribute(self, instance_id: str, attribute: str=None):
+
+        params = {"Action": "DescribeInstanceAttribute", "InstanceId": instance_id}
+        self.__update_params(params=params, key="Attribute", value=attribute)
+
+        return self.post(query=params)
+
     def create_private_lan(self, cidr_block: str, private_lan_name: str=None, availability_zone: str=None,
                            accounting_type: int=None, description: str=None):
 
@@ -89,8 +96,7 @@ class ComputingClient(NifCloudClient):
         self.__update_param_from_list(params=params, key="AccountingType", values=accounting_type)
         self.__update_param_from_list(params=params, key="Description", values=description)
 
-        response = self.post(query=params)
-        return response
+        return self.post(query=params)
 
     def delete_private_lan(self, private_lan_name: str=None, network_id: str=None):
 
@@ -98,8 +104,7 @@ class ComputingClient(NifCloudClient):
         self.__update_param_from_list(params=params, key="PrivateLanName", values=private_lan_name)
         self.__update_param_from_list(params=params, key="NetworkId", values=network_id)
 
-        response = self.post(query=params)
-        return response
+        return self.post(query=params)
 
     def describe_private_lans(self, network_ids: str=None, private_lan_names: str=None, filter_query: dict=None):
 
@@ -113,8 +118,7 @@ class ComputingClient(NifCloudClient):
         self.__update_param_from_list(params=params, key="NetworkId", values=network_ids)
         self.__update_param_from_list(params=params, key="PrivateLanName", values=private_lan_names)
 
-        response = self.post(query=params)
-        return response
+        return self.post(query=params)
 
     def create_security_group(self, group_name: str, group_description: str=None, zone: str=None):
 
@@ -122,13 +126,11 @@ class ComputingClient(NifCloudClient):
         self.__update_params(params=params, key="GroupDescription", value=group_description)
         self.__update_params(params=params, key="Placement.AvailabilityZone", value=zone)
 
-        response = self.post(query=params)
-        return response
+        return self.post(query=params)
 
     def delete_security_group(self, group_name: str):
 
         params = {"Action": "DeleteSecurityGroup", "GroupName": group_name}
 
-        response = self.post(query=params)
-        return response
+        return self.post(query=params)
 
