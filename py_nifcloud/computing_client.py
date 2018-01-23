@@ -42,6 +42,13 @@ class ComputingClient(NifCloudClient):
         for i, value in enumerate(values):
             params["{key}.{num}".format(key=key, num=i+1)] = value
 
+    def __update_param_from_dict_in_list(self, params, key, values) -> None:
+
+        values = self.__get_list(values)
+        for i, value in enumerate(values):
+            for k, v in value.items():
+                params["{key}.{num}.{k}".format(key=key, num=i+1, k=k)] = v
+
     @staticmethod
     def __update_params(params, key, value) -> None:
         """
@@ -95,6 +102,38 @@ class ComputingClient(NifCloudClient):
         params = {"Action": "DescribeInstances"}
         self.__update_param_from_list(params=params, key="InstanceId", values=instance_ids)
         self.__update_param_from_list(params=params, key="Tenancy", values=tenancies)
+
+        return self.post(query=params)
+
+    def run_instance(self, image_id: int, key_name: str, instance_id: str=None, security_groups: list=None
+                     , user_data: str=None, user_data_encoding: str=None, instance_type: str=None
+                     , disable_api_termination: str='true', accounting_type: str=None
+                     , admin: str=None, password: str=None, ip_type=None
+                     , public_ip: str=None, agreement: str=None, description: str=None
+                     , network_interface: list=None, licenses: list=None):
+
+        params = {
+            "Action": "RunInstances",
+            "ImageId": str(image_id),
+            "KeyName": key_name,
+        }
+
+        self.__update_params(params=params, key="IpType", value=ip_type)
+        self.__update_params(params=params, key="UserData", value=user_data)
+        self.__update_params(params=params, key="UserData.Encoding", value=user_data_encoding)
+        self.__update_params(params=params, key="InstanceType", value=instance_type)
+        self.__update_params(params=params, key="DisableApiTermination", value=disable_api_termination)
+        self.__update_params(params=params, key="AccountingType", value=accounting_type)
+        self.__update_params(params=params, key="InstanceId", value=instance_id)
+        self.__update_params(params=params, key="Admin", value=admin)
+        self.__update_params(params=params, key="Password", value=password)
+        self.__update_params(params=params, key="PublicIp", value=public_ip)
+        self.__update_params(params=params, key="Agreement", value=agreement)
+        self.__update_params(params=params, key="Description", value=description)
+
+        self.__update_param_from_list(params=params, key="SecurityGroup", values=security_groups)
+        self.__update_param_from_dict_in_list(params=params, key="NetworkInterface", values=network_interface)
+        self.__update_param_from_dict_in_list(params=params, key="License", values=licenses)
 
         return self.post(query=params)
 
