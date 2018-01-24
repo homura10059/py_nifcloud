@@ -144,7 +144,22 @@ class ComputingClient(NifCloudClient):
         self.__update_params(params=params, key="Force", value=force)
         self.__update_param_from_list(params=params, key="Tenancy", values=tenancies)
 
-        return self.get(query=params)
+        return self.post(query=params)
+
+    def start_instances(self, instance_ids: list=None, instance_types: list=None, accounting_types: list=None
+                        , user_data: str = None, user_data_encoding: str = None, nifty_is_bios: str="false"
+                        , tenancies: list=None):
+
+        params = {"Action": "StartInstances"}
+        self.__update_param_from_list(params=params, key="InstanceId", values=instance_ids)
+        self.__update_param_from_list(params=params, key="InstanceType", values=instance_types)
+        self.__update_param_from_list(params=params, key="AccountingType", values=accounting_types)
+        self.__update_params(params=params, key="UserData", value=user_data)
+        self.__update_params(params=params, key="UserData.Encoding", value=user_data_encoding)
+        self.__update_params(params=params, key="NiftyIsBios", value=nifty_is_bios)
+        self.__update_param_from_list(params=params, key="Tenancy", values=tenancies)
+
+        return self.post(query=params)
 
     def create_private_lan(self, cidr_block: str, private_lan_name: str=None, availability_zone: str=None,
                            accounting_type: int=None, description: str=None):
