@@ -137,6 +137,15 @@ class ComputingClient(NifCloudClient):
 
         return self.post(query=params)
 
+    def stop_instances(self, instance_ids: list=None, force: str="false", tenancies: list=None):
+
+        params = {"Action": "StopInstances"}
+        self.__update_param_from_list(params=params, key="InstanceId", values=instance_ids)
+        self.__update_params(params=params, key="Force", value=force)
+        self.__update_param_from_list(params=params, key="Tenancy", values=tenancies)
+
+        return self.get(query=params)
+
     def create_private_lan(self, cidr_block: str, private_lan_name: str=None, availability_zone: str=None,
                            accounting_type: int=None, description: str=None):
 
