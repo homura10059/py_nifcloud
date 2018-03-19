@@ -1,7 +1,7 @@
 # -*- encoding:utf-8 -*-
 from botocore.credentials import Credentials
 from botocore.awsrequest import AWSRequest
-from py_nifcloud.auth import NifCloudSigV2Auth
+from py_nifcloud.auth import NifCloudSigV2Auth, NifCloudSigV0Auth
 import os
 import yaml
 import requests
@@ -96,6 +96,8 @@ class NifCloudClient(object):
         signature_version = self._get_signature_version(request)
         if signature_version == "2":
             NifCloudSigV2Auth(self.CREDENTIALS).add_auth(request)
+        elif signature_version == "0":
+            NifCloudSigV0Auth(self.CREDENTIALS).add_auth(request)
             # TODO: 他のバージョンを追加していく
         else:
             # バージョンが見つからない場合のデフォルト
