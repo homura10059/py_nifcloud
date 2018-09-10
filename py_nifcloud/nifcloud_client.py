@@ -12,7 +12,7 @@ class NifCloudClient(object):
     各サービス用のクライアントはこのクラスを継承して作成する
     """
     API_PROTOCOL = 'https'
-    API_DOMAIN = 'api.cloud.nifty.com'
+    API_DOMAIN = 'api.nifcloud.com'
     CHARSET = 'UTF-8'
     SIGNATURE_METHOD = 'HmacSHA256'
     SIGNATURE_VERSION = '2'
@@ -125,7 +125,7 @@ class NifCloudClient(object):
         path_param = path_param + self.API_VERSION + "/" if self.API_VERSION else path_param
         path_param = path_param + path + "/" if path else path_param
 
-        endpoint_url = "{protocol}://{service}{region}{api_domain}/{path}".format(
+        endpoint_url = "{protocol}://{region}{service}{api_domain}/{path}".format(
             protocol=protocol, service=service, region=region, api_domain=self.API_DOMAIN, path=path_param)
 
         return endpoint_url
