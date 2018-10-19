@@ -8,7 +8,7 @@ except IOError:
 
 setup(
     name='py_nifcloud',
-    version='0.4.0',
+    version='1.0.0',
     description='Python wrapper for NifCloud',
     long_description=readme,
     url='https://github.com/o-hayato/py_nifcloud',
@@ -22,6 +22,18 @@ setup(
         'botocore',
         'beautifulsoup4',
     ],
+    extras_require={
+        'dev': [
+            'pytest>=3',
+            'coverage',
+            'tox',
+            'sphinx',
+            'jupyter',
+            'lxml',
+            'pallets-sphinx-themes',
+            'sphinxcontrib-log-cabinet',
+        ],
+    },
     classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Web Environment',

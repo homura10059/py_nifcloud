@@ -12,14 +12,14 @@ class NifCloudClient(object):
     各サービス用のクライアントはこのクラスを継承して作成する
     """
     API_PROTOCOL = 'https'
-    API_DOMAIN = 'api.cloud.nifty.com'
     CHARSET = 'UTF-8'
     SIGNATURE_METHOD = 'HmacSHA256'
     SIGNATURE_VERSION = '2'
     ISO8601 = '%Y-%m-%dT%H:%M:%SZ'
 
     def __init__(self, service_name, region_name=None, api_version=None, base_path=None,
-                 use_ssl=True, access_key_id=None, secret_access_key=None, config_file='~/.nifcloud.yml'):
+                 use_ssl=True, access_key_id=None, secret_access_key=None, api_domain="api.nifcloud.com",
+                 config_file='~/.nifcloud.yml'):
         """
         config_fileを読み取って認証情報を初期化します。
         引数にも値がある場合には引数が優先されます。
@@ -58,6 +58,8 @@ class NifCloudClient(object):
             self.ACCESS_KEY_ID = access_key_id
         if secret_access_key is not None:
             self.SECRET_ACCESS_KEY = secret_access_key
+
+        self.API_DOMAIN = api_domain
 
         # 認証情報を生成
         self.CREDENTIALS = Credentials(self.ACCESS_KEY_ID, self.SECRET_ACCESS_KEY)
@@ -125,7 +127,7 @@ class NifCloudClient(object):
         path_param = path_param + self.API_VERSION + "/" if self.API_VERSION else path_param
         path_param = path_param + path + "/" if path else path_param
 
-        endpoint_url = "{protocol}://{service}{region}{api_domain}/{path}".format(
+        endpoint_url = "{protocol}://{region}{service}{api_domain}/{path}".format(
             protocol=protocol, service=service, region=region, api_domain=self.API_DOMAIN, path=path_param)
 
         return endpoint_url
