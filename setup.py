@@ -22,6 +22,18 @@ setup(
         'botocore',
         'beautifulsoup4',
     ],
+    extras_require={
+        'dev': [
+            'pytest>=3',
+            'coverage',
+            'tox',
+            'sphinx',
+            'jupyter',
+            'lxml',
+            'pallets-sphinx-themes',
+            'sphinxcontrib-log-cabinet',
+        ],
+    },
     classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Web Environment',

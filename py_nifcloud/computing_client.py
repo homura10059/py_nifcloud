@@ -12,7 +12,8 @@ class ComputingClient(NifCloudClient):
         hourly = 2
 
     def __init__(self, service_name="computing", region_name=None, api_version=None, base_path="api",
-                 use_ssl=True, access_key_id=None, secret_access_key=None, config_file='~/.nifcloud.yml'):
+                 use_ssl=True, access_key_id=None, secret_access_key=None, api_domain="api.nifcloud.com",
+                 config_file='~/.nifcloud.yml'):
 
         # file から読み出し
         file_path = os.path.expanduser(config_file).replace('/', os.sep)
@@ -28,7 +29,7 @@ class ComputingClient(NifCloudClient):
         region_name = os.getenv("COMPUTING_REGION_NAME", region_name)
 
         super().__init__(service_name, region_name, api_version, base_path, use_ssl,
-                         access_key_id, secret_access_key, config_file)
+                         access_key_id, secret_access_key, api_domain, config_file)
 
     def __update_param_from_list(self, params, key, values) -> None:
         """
